@@ -1,4 +1,4 @@
-# 🏦 miniBanco
+# 🏦 NexusNewBank
 
 > Aplicação bancária de console em Java puro, criada com foco no estudo de **arquitetura de projeto**, **boas práticas** e **evolução incremental** do código.
 
@@ -255,5 +255,5 @@ Este projeto é de uso pessoal e educacional.
 ---
 
 <p align="center">
-  Feito com ☕ e vontade de aprender por <strong>linekerx</strong>
+  Feito por <strong>Gabriel Lineker</strong>
 </p>
