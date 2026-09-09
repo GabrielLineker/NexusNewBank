@@ -10,7 +10,6 @@ import com.linekerx.utils.FormatSaldo;
 
 import java.math.BigDecimal;
 
-
 public class Main {
 
     private static final ContaRepository contaRepository = new ContaRepository();
