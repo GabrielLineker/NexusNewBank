@@ -6,14 +6,14 @@ import com.linekerx.exception.ContaJaExisteException;
 import com.linekerx.exception.CpfInvalido;
 import com.linekerx.exception.SaldoInicialNegativoException;
 import com.linekerx.exception.ValorNegativoException;
-import com.linekerx.repository.ContaRepository;
+import com.linekerx.repository.IContaRepository;
 
 import java.math.BigDecimal;
 
 public class ContaService {
-    private final ContaRepository contaRepository;
+    private final IContaRepository contaRepository;
 
-    public ContaService(ContaRepository contaRepository) {
+    public ContaService(IContaRepository contaRepository) {
         this.contaRepository = contaRepository;
     }
 

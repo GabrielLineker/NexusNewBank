@@ -2,7 +2,8 @@ package com.linekerx;
 
 import com.linekerx.domain.Conta;
 import com.linekerx.exception.*;
-import com.linekerx.repository.ContaRepository;
+import com.linekerx.repository.ContaRepositoryMemoriaImpl;
+import com.linekerx.repository.IContaRepository;
 import com.linekerx.service.ContaService;
 import com.linekerx.utils.FormatCpf;
 import com.linekerx.utils.FormatInput;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 
 public class Main {
 
-    private static final ContaRepository contaRepository = new ContaRepository();
+    private static final IContaRepository contaRepository = new ContaRepositoryMemoriaImpl();
     private static final ContaService contaService = new ContaService(contaRepository);
 
     static void main(String[] args) {
