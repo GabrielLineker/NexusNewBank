@@ -38,7 +38,7 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
 
     private Map<String, Conta> lerContasDoArquivo() {
         try {
-            Stream<String> linhas = Files.lines(CAMINHO_ARQUIVO);
+            Stream<String> linhas = Files.lines(CAMINHO_ARQUIVO).skip(1);
             Map<String, Conta> contasRef = new HashMap<>();
             linhas.filter(linha -> !linha.isBlank()).forEach(linha -> {
                 String[] partes = linha.split(",");
@@ -88,6 +88,8 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
     public void salvarDadosNoArquivo() {
         try {
             StringBuilder conteudo = new StringBuilder();
+            conteudo.append("CPF,Nome,Saldo")
+                    .append(System.lineSeparator());
             for (Conta conta : contas.values()) {
                 conteudo.append(conta.getUsuario().cpf())
                         .append(",")

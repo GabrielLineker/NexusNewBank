@@ -146,10 +146,19 @@ public class Main {
     }
 
     private static void exit() {
-        System.out.println("Salvando dados antes de sair...");
-        contaService.salvarDados();
-        System.out.println("Saindo do sistema...");
-        System.exit(0);
+        try{
+            contaRepository.salvarDadosNoArquivo();
+            System.out.println("Dados salvos com sucesso. Saindo do programa...");
+            System.exit(0);
+
+        } catch (ErroSalvarArq e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }
+        finally {
+            System.out.println("Pressione Enter para continuar...");
+            FormatInput.formatarScanner("");
+        }
     }
 
 }
