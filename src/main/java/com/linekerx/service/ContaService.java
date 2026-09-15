@@ -7,13 +7,14 @@ import com.linekerx.exception.CpfInvalido;
 import com.linekerx.exception.SaldoInicialNegativoException;
 import com.linekerx.exception.ValorNegativoException;
 import com.linekerx.repository.IContaRepository;
+import com.linekerx.repository.IContaRepositoryData;
 
 import java.math.BigDecimal;
 
 public class ContaService {
-    private final IContaRepository contaRepository;
+    private final IContaRepositoryData contaRepository;
 
-    public ContaService(IContaRepository contaRepository) {
+    public ContaService(IContaRepositoryData contaRepository) {
         this.contaRepository = contaRepository;
     }
 
@@ -64,5 +65,9 @@ public class ContaService {
 
     public Conta buscaCpf(String cpf) {
         return contaRepository.buscarPorCpf(cpf);
+    }
+
+    public void salvarDados(){
+        contaRepository.salvarDadosNoArquivo();
     }
 }
