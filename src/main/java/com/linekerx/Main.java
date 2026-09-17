@@ -147,7 +147,7 @@ public class Main {
 
     private static void exit() {
         try{
-            contaRepository.salvarDadosNoArquivo();
+            contaService.salvarDados();
             System.out.println("Dados salvos com sucesso. Saindo do programa...");
             System.exit(0);
 
