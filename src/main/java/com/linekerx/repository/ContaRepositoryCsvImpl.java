@@ -24,6 +24,9 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
 
     private Map<String, Conta> lerContasDoArquivo() {
         try {
+            if(!Files.exists(CAMINHO_ARQUIVO)) {
+                return new HashMap<>();
+            }
             Stream<String> linhas = Files.lines(CAMINHO_ARQUIVO);
             Map<String, Conta> contasRef = new HashMap<>();
             linhas.filter(linha -> !linha.isBlank()).skip(1).forEach(linha -> {
@@ -50,7 +53,9 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
     public void criarArquivoSeNaoExistir() {
         try{
             if(!Files.exists(CAMINHO_ARQUIVO)) {
-                Files.createDirectories(CAMINHO_ARQUIVO.getParent());
+                if(!Files.exists(CAMINHO_ARQUIVO.getParent())) {
+                    Files.createDirectories(CAMINHO_ARQUIVO.getParent());
+                }
                 Files.createFile(CAMINHO_ARQUIVO);
             }
         } catch (IOException e) {
