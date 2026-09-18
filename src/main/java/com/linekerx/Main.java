@@ -166,10 +166,6 @@ public class Main {
             System.out.println(e.getMessage());
             System.exit(1);
         }
-        finally {
-            System.out.println("Pressione Enter para continuar...");
-            FormatInput.formatarScanner("");
-        }
     }
 
 }
