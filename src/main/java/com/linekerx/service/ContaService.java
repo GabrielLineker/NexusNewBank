@@ -7,19 +7,18 @@ import com.linekerx.exception.CpfInvalido;
 import com.linekerx.exception.SaldoInicialNegativoException;
 import com.linekerx.exception.ValorNegativoException;
 import com.linekerx.repository.IContaRepository;
-import com.linekerx.repository.IContaRepositoryData;
 
 import java.math.BigDecimal;
 
 public class ContaService {
-    private final IContaRepositoryData contaRepository;
+    private final IContaRepository contaRepository;
 
-    public ContaService(IContaRepositoryData contaRepository) {
+    public ContaService(IContaRepository contaRepository) {
         this.contaRepository = contaRepository;
     }
 
-    public void criarArquivo() {
-        contaRepository.criarArquivoSeNaoExistir();
+    private void atualizarConta(Conta conta) {
+        contaRepository.salvarConta(conta);
     }
 
     public void abrirConta(String nome, String cpf, BigDecimal saldoInicial) {
@@ -47,6 +46,7 @@ public class ContaService {
         }
         Conta conta = contaRepository.buscarPorCpf(cpf);
         conta.depositar(valor);
+        atualizarConta(conta);
     }
 
     public void realizarSaque(String cpf, BigDecimal valor) {
@@ -55,6 +55,7 @@ public class ContaService {
         }
         Conta conta = contaRepository.buscarPorCpf(cpf);
         conta.sacar(valor);
+        atualizarConta(conta);
     }
 
     public void transferir(String cpfOrigem, String cpfDestino, BigDecimal valor) {
@@ -65,13 +66,11 @@ public class ContaService {
         Conta contaDestino = contaRepository.buscarPorCpf(cpfDestino);
         contaOrigem.sacar(valor);
         contaDestino.depositar(valor);
+        atualizarConta(contaOrigem);
+        atualizarConta(contaDestino);
     }
 
     public Conta buscaCpf(String cpf) {
         return contaRepository.buscarPorCpf(cpf);
-    }
-
-    public void salvarDados(){
-        contaRepository.salvarDadosNoArquivo();
     }
 }

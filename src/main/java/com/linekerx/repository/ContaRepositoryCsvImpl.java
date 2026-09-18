@@ -16,11 +16,14 @@ import java.util.stream.Stream;
 
 import java.math.BigDecimal;
 
-public class ContaRepositoryCsvImpl implements IContaRepositoryData {
+public class ContaRepositoryCsvImpl implements IContaRepository {
 
     public static final Path CAMINHO_ARQUIVO = Path.of("data/csvs/contas.csv");
     private final Map<String, Conta> contas = lerContasDoArquivo();
 
+    public ContaRepositoryCsvImpl() {
+        criarArquivoSeNaoExistir();
+    }
 
     private Map<String, Conta> lerContasDoArquivo() {
         try {
@@ -45,12 +48,11 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
             return contasRef;
 
         } catch (IOException e) {
-            throw new ErroLeituraArq(CAMINHO_ARQUIVO, e); // Eu sei q o throw aqui n serve de nada
+            throw new ErroLeituraArq(CAMINHO_ARQUIVO, e);
         }
     }
 
-    @Override
-    public void criarArquivoSeNaoExistir() {
+    private void criarArquivoSeNaoExistir() {
         try{
             if(!Files.exists(CAMINHO_ARQUIVO)) {
                 if(!Files.exists(CAMINHO_ARQUIVO.getParent())) {
@@ -66,6 +68,7 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
     @Override
     public void salvarConta(Conta conta) {
         contas.put(conta.getUsuario().cpf(), conta);
+        salvarDadosNoArquivo();
     }
 
     @Override
@@ -74,6 +77,7 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
         if (contaParaRemover == null) {
             throw new ContaInexistenteException(cpf);
         }
+        salvarDadosNoArquivo();
     }
 
     @Override
@@ -90,8 +94,7 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
         return contas.containsKey(cpf);
     }
 
-    @Override
-    public void salvarDadosNoArquivo() {
+    private void salvarDadosNoArquivo() {
         try {
             StringBuilder conteudo = new StringBuilder();
             conteudo.append("CPF;Nome;Saldo")
