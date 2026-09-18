@@ -18,6 +18,10 @@ public class ContaService {
         this.contaRepository = contaRepository;
     }
 
+    public void criarArquivo() {
+        contaRepository.criarArquivoSeNaoExistir();
+    }
+
     public void abrirConta(String nome, String cpf, BigDecimal saldoInicial) {
         if(cpf.length() != 11) {
             throw new CpfInvalido(cpf);

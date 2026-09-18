@@ -21,30 +21,19 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
     public static final Path CAMINHO_ARQUIVO = Path.of("data/csvs/contas.csv");
     private final Map<String, Conta> contas = lerContasDoArquivo();
 
-    public ContaRepositoryCsvImpl() {
-        criarArquivoSeNaoExistir();
-    }
-
-    private void criarArquivoSeNaoExistir() {
-        try{
-            if(!Files.exists(CAMINHO_ARQUIVO)) {
-                Files.createDirectories(CAMINHO_ARQUIVO.getParent());
-                Files.createFile(CAMINHO_ARQUIVO);
-            }
-        } catch (IOException e) {
-            throw new ErroAoCriarArq(CAMINHO_ARQUIVO, e);
-        }
-    }
 
     private Map<String, Conta> lerContasDoArquivo() {
         try {
             Stream<String> linhas = Files.lines(CAMINHO_ARQUIVO);
             Map<String, Conta> contasRef = new HashMap<>();
             linhas.filter(linha -> !linha.isBlank()).skip(1).forEach(linha -> {
-                String[] partes = linha.split(",");
-                String cpf = partes[0];
-                String nome = partes[1];
-                String saldoStr = partes[2];
+                String[] partes = linha.split("[,;]");
+                if (partes.length < 3) {
+                    return;
+                }
+                String cpf = partes[0].trim();
+                String nome = partes[1].trim();
+                String saldoStr = partes[2].trim();
                 BigDecimal saldo = new BigDecimal(saldoStr);
                 Conta conta = new Conta(new Usuario(nome, cpf), saldo);
                 contasRef.put(cpf, conta);
@@ -53,7 +42,19 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
             return contasRef;
 
         } catch (IOException e) {
-            throw new ErroLeituraArq(CAMINHO_ARQUIVO, e);
+            throw new ErroLeituraArq(CAMINHO_ARQUIVO, e); // Eu sei q o throw aqui n serve de nada
+        }
+    }
+
+    @Override
+    public void criarArquivoSeNaoExistir() {
+        try{
+            if(!Files.exists(CAMINHO_ARQUIVO)) {
+                Files.createDirectories(CAMINHO_ARQUIVO.getParent());
+                Files.createFile(CAMINHO_ARQUIVO);
+            }
+        } catch (IOException e) {
+            throw new ErroAoCriarArq(CAMINHO_ARQUIVO, e);
         }
     }
 
@@ -88,13 +89,13 @@ public class ContaRepositoryCsvImpl implements IContaRepositoryData {
     public void salvarDadosNoArquivo() {
         try {
             StringBuilder conteudo = new StringBuilder();
-            conteudo.append("CPF,Nome,Saldo")
+            conteudo.append("CPF;Nome;Saldo")
                     .append(System.lineSeparator());
             for (Conta conta : contas.values()) {
                 conteudo.append(conta.getUsuario().cpf())
-                        .append(",")
+                        .append(";")
                         .append(conta.getUsuario().nome())
-                        .append(",")
+                        .append(";")
                         .append(conta.getSaldo())
                         .append(System.lineSeparator());
             }

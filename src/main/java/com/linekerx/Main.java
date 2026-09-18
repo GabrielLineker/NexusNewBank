@@ -21,6 +21,8 @@ public class Main {
 
     static void main(String[] args) {
 
+        inicializar();
+
         while (true) {
             System.out.println("Escolha uma opção:");
             System.out.println("1. Visualizar Conta");
@@ -43,6 +45,15 @@ public class Main {
                 case "7" -> exit();
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
+        }
+    }
+
+    private static void inicializar() {
+        try {
+            contaService.criarArquivo();
+        } catch (ErroAoCriarArq e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
     }
 
