@@ -5,7 +5,7 @@ import com.linekerx.domain.Usuario;
 import com.linekerx.exception.ContaInexistenteException;
 import com.linekerx.exception.ErroAoCriarArq;
 import com.linekerx.exception.ErroLeituraArq;
-import com.linekerx.exception.ErroSalvarArq;
+import com.linekerx.exception.ErroSalvarDados;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,17 +19,19 @@ import java.math.BigDecimal;
 public class ContaRepositoryCsvImpl implements IContaRepository {
 
     public static final Path CAMINHO_ARQUIVO = Path.of("data/csvs/contas.csv");
-    private final Map<String, Conta> contas = lerContasDoArquivo();
+    private final Map<String, Conta> contas;
 
     public ContaRepositoryCsvImpl() {
-        criarArquivoSeNaoExistir();
+        if(!Files.exists(CAMINHO_ARQUIVO)) {
+            criarArquivoSeNaoExistir();
+            this.contas = new HashMap<>();
+        } else {
+            this.contas = lerContasDoArquivo();
+        }
     }
 
     private Map<String, Conta> lerContasDoArquivo() {
         try {
-            if(!Files.exists(CAMINHO_ARQUIVO)) {
-                return new HashMap<>();
-            }
             Stream<String> linhas = Files.lines(CAMINHO_ARQUIVO);
             Map<String, Conta> contasRef = new HashMap<>();
             linhas.filter(linha -> !linha.isBlank()).skip(1).forEach(linha -> {
@@ -109,7 +111,7 @@ public class ContaRepositoryCsvImpl implements IContaRepository {
             }
             Files.writeString(CAMINHO_ARQUIVO, conteudo.toString());
         } catch (IOException e) {
-            throw new ErroSalvarArq(CAMINHO_ARQUIVO, e);
+            throw new ErroSalvarDados(CAMINHO_ARQUIVO, e);
         }
     }
 }

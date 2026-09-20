@@ -14,10 +14,11 @@ import java.math.BigDecimal;
 
 public class Main {
 
-    private static final IContaRepository contaRepository = new ContaRepositoryCsvImpl();
-    private static final ContaService contaService = new ContaService(contaRepository);
+    private static IContaRepository contaRepository;
+    private static ContaService contaService;
 
     static void main(String[] args) {
+        inicializar();
 
         while (true) {
             System.out.println("Escolha uma opção:");
@@ -41,6 +42,17 @@ public class Main {
                 case "7" -> exit();
                 default -> System.out.println("Opção inválida. Tente novamente.");
             }
+        }
+    }
+
+    private static void inicializar() {
+        try {
+            contaRepository = new ContaRepositoryCsvImpl();
+            contaService = new ContaService(contaRepository);
+
+        } catch (ErroAoCriarArq | ErroLeituraArq e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
     }
 
@@ -70,7 +82,7 @@ public class Main {
             contaService.abrirConta(nome, cpf, saldoInicial);
             System.out.println("Conta criada com sucesso!");
 
-        } catch (ContaJaExisteException | CpfInvalido | SaldoInicialNegativoException | NumberFormatException e) {
+        } catch (ContaJaExisteException | CpfInvalido | SaldoInicialNegativoException | NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
@@ -85,7 +97,7 @@ public class Main {
             contaService.deletarConta(cpf);
             System.out.println("Conta excluída com sucesso!");
 
-        } catch (ContaInexistenteException e) {
+        } catch (ContaInexistenteException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
@@ -101,7 +113,7 @@ public class Main {
             contaService.realizarDeposito(cpf, valor);
             System.out.println("Depósito realizado com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | NumberFormatException e) {
+        } catch (ContaInexistenteException | ValorNegativoException | NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
@@ -117,7 +129,7 @@ public class Main {
             contaService.realizarSaque(cpf, valor);
             System.out.println("Saque realizado com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException | NumberFormatException e) {
+        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException | NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
@@ -134,7 +146,7 @@ public class Main {
             contaService.transferir(cpfOrigem, cpfDestino, valor);
             System.out.println("Transferência realizada com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException | NumberFormatException e) {
+        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException | NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
