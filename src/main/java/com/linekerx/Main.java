@@ -3,6 +3,7 @@ package com.linekerx;
 import com.linekerx.domain.Conta;
 import com.linekerx.exception.*;
 import com.linekerx.repository.ContaRepositoryCsvImpl;
+import com.linekerx.repository.ContaRepositoryJsonImpl;
 import com.linekerx.repository.IContaRepository;
 import com.linekerx.service.ContaService;
 import com.linekerx.utils.FormatCpf;
@@ -17,7 +18,7 @@ public class Main {
     private static IContaRepository contaRepository;
     private static ContaService contaService;
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         inicializar();
 
         while (true) {
@@ -47,7 +48,7 @@ public class Main {
 
     private static void inicializar() {
         try {
-            contaRepository = new ContaRepositoryCsvImpl();
+            contaRepository = new ContaRepositoryJsonImpl();
             contaService = new ContaService(contaRepository);
 
         } catch (ErroAoCriarArq | ErroLeituraArq e) {
@@ -62,7 +63,7 @@ public class Main {
             Conta conta = contaService.buscaCpf(cpf);
             System.out.println("Nome: " + conta.getUsuario().nome());
             System.out.println("CPF: " + FormatCpf.formatarCpf(conta.getUsuario().cpf()));
-            System.out.println("Saldo: R$ " + FormatSaldo.formatarSaldo(conta.getSaldo()));
+            System.out.println("Saldo: " + FormatSaldo.formatarSaldo(conta.getSaldo()));
 
         } catch (ContaInexistenteException e) {
             System.out.println(e.getMessage());

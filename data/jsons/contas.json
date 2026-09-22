@@ -1,0 +1,44 @@
+{
+  "12345678900": {
+    "usuario": {
+      "nome": "Gabriel Lineker",
+      "cpf": "12345678900"
+    },
+    "saldo": 10000.00
+  },
+  "98765432100": {
+    "usuario": {
+      "nome": "Maria Fernanda Souza",
+      "cpf": "98765432100"
+    },
+    "saldo": 2340.75
+  },
+  "45612378900": {
+    "usuario": {
+      "nome": "João Pedro Almeida",
+      "cpf": "45612378900"
+    },
+    "saldo": 980.00
+  },
+  "78912345600": {
+    "usuario": {
+      "nome": "Ana Carolina Ribeiro",
+      "cpf": "78912345600"
+    },
+    "saldo": 5230.20
+  },
+  "32165498700": {
+    "usuario": {
+      "nome": "Carlos Eduardo Santos",
+      "cpf": "32165498700"
+    },
+    "saldo": 120.10
+  },
+  "11111111111": {
+    "usuario": {
+      "nome": "Izadora Fernandes",
+      "cpf": "11111111111"
+    },
+    "saldo": 1000
+  }
+}
