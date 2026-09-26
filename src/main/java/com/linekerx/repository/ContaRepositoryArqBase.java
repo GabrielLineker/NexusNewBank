@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ContaRepositoryArqBase implements IContaRepository {
+    protected Path caminhoArquivo;
     protected Map<String, Conta> contas;
 
-    protected void configRepository(Path caminhoArquivo) {
+    protected void configRepository(String caminho) {
+        this.caminhoArquivo = Path.of(caminho);
         if(!Files.exists(caminhoArquivo)) {
             criarDirArq();
             this.contas = new HashMap<>();
