@@ -56,12 +56,10 @@ public class ContaRepositoryCsvImpl implements IContaRepository {
 
     private void criarArquivoSeNaoExistir() {
         try{
-            if(!Files.exists(CAMINHO_ARQUIVO)) {
-                if(!Files.exists(CAMINHO_ARQUIVO.getParent())) {
-                    Files.createDirectories(CAMINHO_ARQUIVO.getParent());
-                }
-                Files.createFile(CAMINHO_ARQUIVO);
+            if(!Files.exists(CAMINHO_ARQUIVO.getParent())) {
+                Files.createDirectories(CAMINHO_ARQUIVO.getParent());
             }
+            Files.createFile(CAMINHO_ARQUIVO);
         } catch (IOException e) {
             throw new ErroAoCriarArq(CAMINHO_ARQUIVO, e);
         }
