@@ -1,8 +1,24 @@
 package com.linekerx.repository;
 
+import com.linekerx.domain.Conta;
+import io.github.cdimascio.dotenv.Dotenv;
+
+import java.sql.*;
+
 public class ContaRepositoryJdbcImpl implements IContaRepository {
+
+    private static final Dotenv dotenv = Dotenv.load();
+
+    private static final String URL = dotenv.get("DB_URL");
+    private static final String USER = dotenv.get("DB_USERNAME");
+    private static final String PASSWORD = dotenv.get("DB_PASSWORD");
+
+    private Connection conectar() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
     @Override
-    public void salvarConta(com.linekerx.domain.Conta conta) {
+    public void salvarConta(Conta conta) {
         // Implementação para salvar a conta no banco de dados usando JDBC
     }
 
@@ -12,14 +28,22 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
     }
 
     @Override
-    public com.linekerx.domain.Conta buscarPorCpf(String cpf) {
+    public Conta buscarPorCpf(String cpf) {
         // Implementação para buscar a conta no banco de dados usando JDBC
         return null;
     }
 
     @Override
     public boolean existeContaParaCpf(String cpf) {
-        // Implementação para verificar se a conta existe no banco de dados usando JDBC
-        return false;
+        String sql = "SELECT 1 FROM contas WHERE cpf = ?";
+        try (Connection conn = conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+        }
     }
 }

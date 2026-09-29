@@ -3,6 +3,7 @@ package com.linekerx;
 import com.linekerx.domain.Conta;
 import com.linekerx.exception.*;
 import com.linekerx.repository.ContaRepositoryCsvImpl;
+import com.linekerx.repository.ContaRepositoryJdbcImpl;
 import com.linekerx.repository.ContaRepositoryJsonImpl;
 import com.linekerx.repository.IContaRepository;
 import com.linekerx.service.ContaService;
@@ -20,6 +21,7 @@ public class Main {
 
     public static void main(String[] args) {
         inicializar();
+        System.out.println(contaRepository.existeContaParaCpf("00000000000"));
 
         while (true) {
             System.out.println("Escolha uma opção:");
@@ -48,7 +50,7 @@ public class Main {
 
     private static void inicializar() {
         try {
-            contaRepository = new ContaRepositoryJsonImpl();
+            contaRepository = new ContaRepositoryJdbcImpl();
             contaService = new ContaService(contaRepository);
 
         } catch (ErroAoCriarArq | ErroLeituraArq e) {
