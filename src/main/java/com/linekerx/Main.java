@@ -21,7 +21,6 @@ public class Main {
 
     public static void main(String[] args) {
         inicializar();
-        System.out.println(contaRepository.existeContaParaCpf("00000000000"));
 
         while (true) {
             System.out.println("Escolha uma opção:");
