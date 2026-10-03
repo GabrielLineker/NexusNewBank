@@ -60,7 +60,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
                 if (rs.next()) {
                     String nome = rs.getString("nome");
                     BigDecimal saldo = rs.getBigDecimal("saldo");
-                    return new Conta(new Usuario(cpf, nome), saldo);
+                    return new Conta(new Usuario(nome, cpf), saldo);
                 } else {
                     throw new ContaInexistenteException(cpf);
                 }
