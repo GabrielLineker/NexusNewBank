@@ -23,7 +23,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
     @Override
     public void salvarConta(Conta conta) {
         String sql = "INSERT INTO contas (cpf, nome, saldo) VALUES (?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE nome = VALUES(nome), saldo = VALUES(saldo)";
+                "ON CONFLICT (cpf) DO UPDATE SET saldo = EXCLUDED.saldo";
         try (Connection conn = conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, conta.getUsuario().cpf());
