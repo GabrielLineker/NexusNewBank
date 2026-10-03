@@ -41,7 +41,10 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
         try (Connection conn = conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cpf);
-            stmt.executeUpdate();
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                throw new ContaInexistenteException(cpf);
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao acessar o banco de dados", e);
         }
