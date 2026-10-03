@@ -2,6 +2,7 @@ package com.linekerx.repository;
 
 import com.linekerx.domain.Conta;
 import com.linekerx.domain.Usuario;
+import com.linekerx.exception.ContaInexistenteException;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
                     BigDecimal saldo = rs.getBigDecimal("saldo");
                     return new Conta(new Usuario(cpf, nome), saldo);
                 } else {
-                    return null;
+                    throw new ContaInexistenteException(cpf);
                 }
             }
         } catch (SQLException e) {
