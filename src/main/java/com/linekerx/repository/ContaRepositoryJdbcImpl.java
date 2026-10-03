@@ -1,8 +1,10 @@
 package com.linekerx.repository;
 
 import com.linekerx.domain.Conta;
+import com.linekerx.domain.Usuario;
 import io.github.cdimascio.dotenv.Dotenv;
 
+import java.math.BigDecimal;
 import java.sql.*;
 
 public class ContaRepositoryJdbcImpl implements IContaRepository {
@@ -29,8 +31,22 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
 
     @Override
     public Conta buscarPorCpf(String cpf) {
-        // Implementação para buscar a conta no banco de dados usando JDBC
-        return null;
+        String sql = "SELECT nome, saldo FROM contas WHERE cpf = ?";
+        try (Connection conn = conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String nome = rs.getString("nome");
+                    BigDecimal saldo = rs.getBigDecimal("saldo");
+                    return new Conta(new Usuario(cpf, nome), saldo);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+        }
     }
 
     @Override
