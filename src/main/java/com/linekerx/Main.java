@@ -84,7 +84,8 @@ public class Main {
             contaService.abrirConta(nome, cpf, saldoInicial);
             System.out.println("Conta criada com sucesso!");
 
-        } catch (ContaJaExisteException | CpfInvalido | SaldoInicialNegativoException | NumberFormatException | ErroSalvarDados e) {
+        } catch (ContaJaExisteException | CpfInvalido | SaldoInicialNegativoException |
+                 NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
@@ -131,7 +132,8 @@ public class Main {
             contaService.realizarSaque(cpf, valor);
             System.out.println("Saque realizado com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException | NumberFormatException | ErroSalvarDados e) {
+        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException |
+                 NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
@@ -148,7 +150,8 @@ public class Main {
             contaService.transferir(cpfOrigem, cpfDestino, valor);
             System.out.println("Transferência realizada com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException | NumberFormatException | ErroSalvarDados e) {
+        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException |
+                 NumberFormatException | ErroSalvarDados e) {
             System.out.println(e.getMessage());
 
         } finally {
