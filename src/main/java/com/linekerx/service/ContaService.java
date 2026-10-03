@@ -31,8 +31,7 @@ public class ContaService {
         if(saldoInicial.compareTo(BigDecimal.ZERO) < 0) {
             throw new SaldoInicialNegativoException(saldoInicial);
         }
-        Usuario usuario = new Usuario(nome, cpf);
-        Conta conta = new Conta(usuario, saldoInicial);
+        Conta conta = new Conta(new Usuario(nome, cpf), saldoInicial);
         contaRepository.salvarConta(conta);
     }
 
