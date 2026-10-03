@@ -22,7 +22,17 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
 
     @Override
     public void salvarConta(Conta conta) {
-        // Implementação para salvar a conta no banco de dados usando JDBC
+        String sql = "INSERT INTO contas (cpf, nome, saldo) VALUES (?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE nome = VALUES(nome), saldo = VALUES(saldo)";
+        try (Connection conn = conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, conta.getUsuario().cpf());
+            stmt.setString(2, conta.getUsuario().nome());
+            stmt.setBigDecimal(3, conta.getSaldo());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+        }
     }
 
     @Override
