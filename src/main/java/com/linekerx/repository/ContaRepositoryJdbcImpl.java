@@ -27,7 +27,14 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
 
     @Override
     public void removerConta(String cpf) {
-        // Implementação para remover a conta do banco de dados usando JDBC
+        String sql = "DELETE FROM contas WHERE cpf = ?";
+        try (Connection conn = conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+        }
     }
 
     @Override
