@@ -90,8 +90,13 @@ public class Main {
             System.out.println("Conta criada com sucesso!");
 
         } catch (ContaJaExisteException | CpfInvalido | SaldoInicialNegativoException |
-                 NumberFormatException | ErroSalvarDados e) {
+                 NumberFormatException e) {
+            logger.warn("Regra de negócio impediu a criação da conta: {}", e.getMessage());
             System.out.println(e.getMessage());
+
+        } catch (ErroSalvarDados e) {
+            logger.error("Falha ao salvar a conta no banco de dados/arquivo", e);
+            System.out.println("Ocorreu um erro interno no sistema. Tente novamente mais tarde .");
 
         } finally {
             System.out.println("Pressione Enter para continuar...");
@@ -105,8 +110,13 @@ public class Main {
             contaService.deletarConta(cpf);
             System.out.println("Conta excluída com sucesso!");
 
-        } catch (ContaInexistenteException | ErroSalvarDados e) {
+        } catch (ContaInexistenteException e) {
+            logger.warn("Conta inexistente: {}", e.getMessage());
             System.out.println(e.getMessage());
+
+        } catch (ErroSalvarDados e) {
+            logger.error("Falha ao salvar a exclusão da conta no banco de dados/arquivo", e);
+            System.out.println("Ocorreu um erro interno no sistema. Tente novamente mais tarde .");
 
         } finally {
             System.out.println("Pressione Enter para continuar...");
@@ -121,8 +131,13 @@ public class Main {
             contaService.realizarDeposito(cpf, valor);
             System.out.println("Depósito realizado com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | NumberFormatException | ErroSalvarDados e) {
+        } catch (ContaInexistenteException | ValorNegativoException | NumberFormatException e) {
+            logger.warn("Regra de negócio impediu o depósito: {}", e.getMessage());
             System.out.println(e.getMessage());
+
+        } catch (ErroSalvarDados e) {
+            logger.error("Falha ao salvar o depósito no banco de dados/arquivo", e);
+            System.out.println("Ocorreu um erro interno no sistema. Tente novamente mais tarde.");
 
         } finally {
             System.out.println("Pressione Enter para continuar...");
@@ -137,9 +152,14 @@ public class Main {
             contaService.realizarSaque(cpf, valor);
             System.out.println("Saque realizado com sucesso!");
 
-        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException |
-                 NumberFormatException | ErroSalvarDados e) {
+        } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException
+                 | NumberFormatException e) {
+            logger.warn("Regra de negócio impediu o saque: {}", e.getMessage());
             System.out.println(e.getMessage());
+
+        } catch (ErroSalvarDados e) {
+            logger.error("Falha ao salvar o saque no banco de dados/arquivo", e);
+            System.out.println("Ocorreu um erro interno no sistema. Tente novamente mais tarde.");
 
         } finally {
             System.out.println("Pressione Enter para continuar...");
@@ -156,8 +176,13 @@ public class Main {
             System.out.println("Transferência realizada com sucesso!");
 
         } catch (ContaInexistenteException | ValorNegativoException | SaldoInsuficienteException |
-                 NumberFormatException | ErroSalvarDados e) {
+                 NumberFormatException e) {
+            logger.warn("Regra de negócio impediu a transferência: {}", e.getMessage());
             System.out.println(e.getMessage());
+
+        } catch (ErroSalvarDados e) {
+            logger.error("Falha ao salvar a transferência no banco de dados/arquivo", e);
+            System.out.println("Ocorreu um erro interno no sistema. Tente novamente mais tarde.");
 
         } finally {
             System.out.println("Pressione Enter para continuar...");
