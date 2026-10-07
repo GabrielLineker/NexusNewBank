@@ -7,6 +7,8 @@ import com.linekerx.service.ContaService;
 import com.linekerx.utils.FormatCpf;
 import com.linekerx.utils.FormatInput;
 import com.linekerx.utils.FormatSaldo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
@@ -17,6 +19,8 @@ public class Main {
 
     private static IContaRepository contaRepository;
     private static ContaService contaService;
+
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         inicializar();
@@ -47,12 +51,14 @@ public class Main {
     }
 
     private static void inicializar() {
+        logger.info("Iniciando o sistema...");
         try {
             contaRepository = criarContaRepository();
             contaService = new ContaService(contaRepository);
+            logger.debug("Sistema inicializado com sucesso.");
 
         } catch (ErroAoCriarArq | ErroLeituraArq e) {
-            System.out.println(e.getMessage());
+            logger.error("Erro ao inicializar o sistema", e);
             System.exit(1);
         }
     }
