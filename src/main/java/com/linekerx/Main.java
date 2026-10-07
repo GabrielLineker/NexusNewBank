@@ -2,16 +2,15 @@ package com.linekerx;
 
 import com.linekerx.domain.Conta;
 import com.linekerx.exception.*;
-import com.linekerx.repository.ContaRepositoryCsvImpl;
-import com.linekerx.repository.ContaRepositoryJdbcImpl;
-import com.linekerx.repository.ContaRepositoryJsonImpl;
-import com.linekerx.repository.IContaRepository;
+import com.linekerx.repository.*;
 import com.linekerx.service.ContaService;
 import com.linekerx.utils.FormatCpf;
 import com.linekerx.utils.FormatInput;
 import com.linekerx.utils.FormatSaldo;
 
 import java.math.BigDecimal;
+
+import static com.linekerx.repository.RepositoryFactory.criarContaRepository;
 
 
 public class Main {
@@ -49,7 +48,7 @@ public class Main {
 
     private static void inicializar() {
         try {
-            contaRepository = new ContaRepositoryJdbcImpl();
+            contaRepository = criarContaRepository();
             contaService = new ContaService(contaRepository);
 
         } catch (ErroAoCriarArq | ErroLeituraArq e) {
