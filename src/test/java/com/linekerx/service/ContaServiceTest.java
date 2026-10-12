@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -32,6 +33,17 @@ public class ContaServiceTest {
             contaService.realizarSaque("12345678901", new BigDecimal("100.00"));
         });
 
-        Mockito.verify(contaRepository, Mockito.times(1)).buscarPorCpf("12345678901");
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(conta);
+    }
+
+    @Test
+    void deveRealizarSaqueComSucesso(){
+        Conta conta = new Conta(new Usuario("João", "12345678901"), new BigDecimal("100.00"));
+        Mockito.when(contaRepository.buscarPorCpf("12345678901")).thenReturn(conta);
+
+        contaService.realizarSaque("12345678901", new BigDecimal("50.00"));
+        assertEquals(new BigDecimal("50.00"), conta.getSaldo());
+
+        Mockito.verify(contaRepository, Mockito.times(1)).salvarConta(conta);
     }
 }
