@@ -26,6 +26,24 @@ public class ContaServiceTest {
     @InjectMocks private ContaService contaService;
 
     @Test
+    void deveRealizarDepositoComSucesso() {
+        Conta conta = new Conta(new Usuario("João", "12345678901"), new BigDecimal("100.00"));
+        Mockito.when(contaRepository.buscarPorCpf("12345678901")).thenReturn(conta);
+
+        contaService.realizarDeposito("12345678901", new BigDecimal("50.00"));
+        assertEquals(new BigDecimal("150.00"), conta.getSaldo());
+
+        Mockito.verify(contaRepository, Mockito.times(1)).salvarConta(conta);
+    }
+
+    @Test
+    void deveLancarValorNegativoExceptionQuandoDepositoForNegativo(){
+        assertThrows(ValorNegativoException.class, () -> {
+            contaService.realizarDeposito("12345678901", new BigDecimal("-50.00"));
+        });
+    }
+
+    @Test
     void deveLancarValorNegativoExceptionQuandoSaqueForNegativo(){
         assertThrows(ValorNegativoException.class, () -> {
             contaService.realizarSaque("12345678901", new BigDecimal("-50.00"));
