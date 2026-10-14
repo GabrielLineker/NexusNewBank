@@ -34,10 +34,11 @@ public class ContaServiceTest {
 
     @Test
     void deveLancarContaInexistenteExceptionQuandoRemoverContaInexistente() {
-        Mockito.doThrow(new ContaInexistenteException("A conta 12345678901 não está cadastrada no sistema.")).when(contaRepository).removerConta("12345678901");
+        Mockito.doThrow(new ContaInexistenteException("A conta 12345678900 não está cadastrada no sistema."))
+                .when(contaRepository).removerConta("12345678900");
 
         assertThrows(ContaInexistenteException.class, () -> {
-            contaService.deletarConta("12345678901");
+            contaService.deletarConta("12345678900");
         });
 
         Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
