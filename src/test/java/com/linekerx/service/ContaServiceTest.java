@@ -3,6 +3,7 @@ package com.linekerx.service;
 import com.linekerx.domain.Conta;
 import com.linekerx.domain.Usuario;
 import com.linekerx.exception.SaldoInsuficienteException;
+import com.linekerx.exception.ValorNegativoException;
 import com.linekerx.repository.IContaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,13 @@ public class ContaServiceTest {
     @Mock private IContaRepository contaRepository;
 
     @InjectMocks private ContaService contaService;
+
+    @Test
+    void deveLancarValorNegativoExceptionQuandoSaqueForNegativo(){
+        assertThrows(ValorNegativoException.class, () -> {
+            contaService.realizarSaque("12345678901", new BigDecimal("-50.00"));
+        });
+    }
 
     @Test
     void deveLancarSaldoInsuficienteExceptionQuandoSaqueForMaiorQueSaldo(){
