@@ -2,6 +2,7 @@ package com.linekerx.service;
 
 import com.linekerx.domain.Conta;
 import com.linekerx.domain.Usuario;
+import com.linekerx.exception.ContaInexistenteException;
 import com.linekerx.exception.SaldoInsuficienteException;
 import com.linekerx.exception.ValorNegativoException;
 import com.linekerx.repository.IContaRepository;
@@ -24,6 +25,23 @@ public class ContaServiceTest {
     @Mock private IContaRepository contaRepository;
 
     @InjectMocks private ContaService contaService;
+
+    @Test
+    void deveDeletarContaComSucesso() {
+        contaService.deletarConta("12345678901");
+        Mockito.verify(contaRepository, Mockito.times(1)).removerConta("12345678901");
+    }
+
+    @Test
+    void deveLancarContaInexistenteExceptionQuandoRemoverContaInexistente() {
+        Mockito.doThrow(new ContaInexistenteException("A conta 12345678901 não está cadastrada no sistema.")).when(contaRepository).removerConta("12345678901");
+
+        assertThrows(ContaInexistenteException.class, () -> {
+            contaService.deletarConta("12345678901");
+        });
+
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
+    }
 
     @Test
     void deveRealizarDepositoComSucesso() {
