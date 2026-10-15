@@ -6,6 +6,7 @@ import com.linekerx.exception.*;
 import com.linekerx.repository.IContaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
@@ -27,7 +29,14 @@ public class ContaServiceTest {
     @Test
     void deveAbrirContaComSucesso() {
         contaService.abrirConta("João", "12345678901", new BigDecimal("100.00"));
-        Mockito.verify(contaRepository, Mockito.times(1)).salvarConta(Mockito.any(Conta.class));
+
+        ArgumentCaptor<Conta> captor = ArgumentCaptor.forClass(Conta.class);
+        Mockito.verify(contaRepository, Mockito.times(1)).salvarConta(captor.capture());
+
+        Conta contaSalva = captor.getValue();
+        assertEquals("João", contaSalva.getUsuario().nome());
+        assertEquals("12345678901", contaSalva.getUsuario().cpf());
+        assertEquals(new BigDecimal("100.00"), contaSalva.getSaldo());
     }
 
     @Test
@@ -35,6 +44,8 @@ public class ContaServiceTest {
         assertThrows(CpfInvalido.class, () -> {
             contaService.abrirConta("João", "1234567890", new BigDecimal("100.00"));
         });
+
+        Mockito.verifyNoInteractions(contaRepository);
     }
 
     @Test
@@ -44,6 +55,8 @@ public class ContaServiceTest {
         assertThrows(ContaJaExisteException.class, () -> {
             contaService.abrirConta("João", "12345678901", new BigDecimal("100.00"));
         });
+
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
@@ -51,6 +64,8 @@ public class ContaServiceTest {
         assertThrows(SaldoInicialNegativoException.class, () -> {
             contaService.abrirConta("João", "12345678901", new BigDecimal("-100.00"));
         });
+
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
@@ -61,7 +76,7 @@ public class ContaServiceTest {
 
     @Test
     void deveLancarContaInexistenteExceptionQuandoRemoverContaInexistente() {
-        Mockito.doThrow(new ContaInexistenteException("A conta 12345678900 não está cadastrada no sistema."))
+        Mockito.doThrow(new ContaInexistenteException("12345678900"))
                 .when(contaRepository).removerConta("12345678900");
 
         assertThrows(ContaInexistenteException.class, () -> {
@@ -85,6 +100,29 @@ public class ContaServiceTest {
         assertThrows(ValorNegativoException.class, () -> {
             contaService.realizarDeposito("12345678901", new BigDecimal("-50.00"));
         });
+
+        Mockito.verifyNoInteractions(contaRepository);
+    }
+
+    @Test
+    void deveLancarValorNegativoExceptionQuandoDepositoForZero(){
+        assertThrows(ValorNegativoException.class, () -> {
+            contaService.realizarDeposito("12345678901", BigDecimal.ZERO);
+        });
+
+        Mockito.verifyNoInteractions(contaRepository);
+    }
+
+    @Test
+    void deveLancarContaInexistenteExceptionQuandoDepositarEmContaInexistente(){
+        Mockito.when(contaRepository.buscarPorCpf("12345678900"))
+                .thenThrow(new ContaInexistenteException("12345678900"));
+
+        assertThrows(ContaInexistenteException.class, () -> {
+            contaService.realizarDeposito("12345678900", new BigDecimal("50.00"));
+        });
+
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
@@ -92,6 +130,29 @@ public class ContaServiceTest {
         assertThrows(ValorNegativoException.class, () -> {
             contaService.realizarSaque("12345678901", new BigDecimal("-50.00"));
         });
+
+        Mockito.verifyNoInteractions(contaRepository);
+    }
+
+    @Test
+    void deveLancarValorNegativoExceptionQuandoSaqueForZero(){
+        assertThrows(ValorNegativoException.class, () -> {
+            contaService.realizarSaque("12345678901", BigDecimal.ZERO);
+        });
+
+        Mockito.verifyNoInteractions(contaRepository);
+    }
+
+    @Test
+    void deveLancarContaInexistenteExceptionQuandoSacarDeContaInexistente(){
+        Mockito.when(contaRepository.buscarPorCpf("12345678900"))
+                .thenThrow(new ContaInexistenteException("12345678900"));
+
+        assertThrows(ContaInexistenteException.class, () -> {
+            contaService.realizarSaque("12345678900", new BigDecimal("50.00"));
+        });
+
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
@@ -103,7 +164,7 @@ public class ContaServiceTest {
             contaService.realizarSaque("12345678901", new BigDecimal("100.00"));
         });
 
-        Mockito.verify(contaRepository, Mockito.never()).salvarConta(conta);
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
@@ -146,14 +207,72 @@ public class ContaServiceTest {
             contaService.transferir("12345678901", "10987654321", new BigDecimal("100.00"));
         });
 
-        Mockito.verify(contaRepository, Mockito.never()).salvarConta(contaOrigem);
-        Mockito.verify(contaRepository, Mockito.never()).salvarConta(contaDestino);
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
     void deveLancarValorNegativoExceptionQuandoTransferenciaForNegativa() {
         assertThrows(ValorNegativoException.class, () -> {
             contaService.transferir("12345678901", "10987654321", new BigDecimal("-50.00"));
+        });
+
+        Mockito.verifyNoInteractions(contaRepository);
+    }
+
+    @Test
+    void deveLancarValorNegativoExceptionQuandoTransferenciaForZero() {
+        assertThrows(ValorNegativoException.class, () -> {
+            contaService.transferir("12345678901", "10987654321", BigDecimal.ZERO);
+        });
+
+        Mockito.verifyNoInteractions(contaRepository);
+    }
+
+    @Test
+    void deveLancarContaInexistenteExceptionQuandoContaOrigemNaoExistir() {
+        Mockito.when(contaRepository.buscarPorCpf("12345678900"))
+                .thenThrow(new ContaInexistenteException("12345678900"));
+
+        assertThrows(ContaInexistenteException.class, () -> {
+            contaService.transferir("12345678900", "10987654321", new BigDecimal("30.00"));
+        });
+
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
+    }
+
+    @Test
+    void deveLancarContaInexistenteExceptionQuandoContaDestinoNaoExistir() {
+        Conta contaOrigem = new Conta(new Usuario("João", "12345678901"), new BigDecimal("100.00"));
+
+        Mockito.when(contaRepository.buscarPorCpf("12345678901")).thenReturn(contaOrigem);
+        Mockito.when(contaRepository.buscarPorCpf("10987654300"))
+                .thenThrow(new ContaInexistenteException("10987654300"));
+
+        assertThrows(ContaInexistenteException.class, () -> {
+            contaService.transferir("12345678901", "10987654300", new BigDecimal("30.00"));
+        });
+
+        assertEquals(new BigDecimal("100.00"), contaOrigem.getSaldo());
+        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
+    }
+
+    @Test
+    void deveRetornarContaAoBuscarPorCpf() {
+        Conta conta = new Conta(new Usuario("João", "12345678901"), new BigDecimal("100.00"));
+        Mockito.when(contaRepository.buscarPorCpf("12345678901")).thenReturn(conta);
+
+        Conta contaBuscada = contaService.buscaCpf("12345678901");
+
+        assertSame(conta, contaBuscada);
+    }
+
+    @Test
+    void deveLancarContaInexistenteExceptionAoBuscarCpfInexistente() {
+        Mockito.when(contaRepository.buscarPorCpf("12345678900"))
+                .thenThrow(new ContaInexistenteException("12345678900"));
+
+        assertThrows(ContaInexistenteException.class, () -> {
+            contaService.buscaCpf("12345678900");
         });
     }
 }
