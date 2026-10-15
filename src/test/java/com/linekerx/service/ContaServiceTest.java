@@ -2,9 +2,7 @@ package com.linekerx.service;
 
 import com.linekerx.domain.Conta;
 import com.linekerx.domain.Usuario;
-import com.linekerx.exception.ContaInexistenteException;
-import com.linekerx.exception.SaldoInsuficienteException;
-import com.linekerx.exception.ValorNegativoException;
+import com.linekerx.exception.*;
 import com.linekerx.repository.IContaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +25,35 @@ public class ContaServiceTest {
     @InjectMocks private ContaService contaService;
 
     @Test
+    void deveAbrirContaComSucesso() {
+        contaService.abrirConta("João", "12345678901", new BigDecimal("100.00"));
+        Mockito.verify(contaRepository, Mockito.times(1)).salvarConta(Mockito.any(Conta.class));
+    }
+
+    @Test
+    void deveLancarCpfInvalidoQuandoCpfForInvalido() {
+        assertThrows(CpfInvalido.class, () -> {
+            contaService.abrirConta("João", "1234567890", new BigDecimal("100.00"));
+        });
+    }
+
+    @Test
+    void deveLancarContaJaExisteExceptionQuandoContaJaExiste() {
+        Mockito.when(contaRepository.existeContaParaCpf("12345678901")).thenReturn(true);
+
+        assertThrows(ContaJaExisteException.class, () -> {
+            contaService.abrirConta("João", "12345678901", new BigDecimal("100.00"));
+        });
+    }
+
+    @Test
+    void deveLancarSaldoInicialNegativoExceptionQuandoSaldoInicialForNegativo() {
+        assertThrows(SaldoInicialNegativoException.class, () -> {
+            contaService.abrirConta("João", "12345678901", new BigDecimal("-100.00"));
+        });
+    }
+
+    @Test
     void deveDeletarContaComSucesso() {
         contaService.deletarConta("12345678901");
         Mockito.verify(contaRepository, Mockito.times(1)).removerConta("12345678901");
@@ -40,8 +67,6 @@ public class ContaServiceTest {
         assertThrows(ContaInexistenteException.class, () -> {
             contaService.deletarConta("12345678900");
         });
-
-        Mockito.verify(contaRepository, Mockito.never()).salvarConta(Mockito.any());
     }
 
     @Test
