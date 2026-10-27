@@ -9,12 +9,22 @@ import java.math.BigDecimal;
 import java.sql.*;
 
 public class ContaRepositoryJdbcImpl implements IContaRepository {
+    private final String URL;
+    private final String USER;
+    private final String PASSWORD;
 
-    private static final Dotenv dotenv = Dotenv.load();
+    public ContaRepositoryJdbcImpl() {
+        Dotenv dotenv = Dotenv.load();
+        this.URL = dotenv.get("DB_URL");
+        this.USER = dotenv.get("DB_USER");
+        this.PASSWORD = dotenv.get("DB_PASSWORD");
+    }
 
-    private static final String URL = dotenv.get("DB_URL");
-    private static final String USER = dotenv.get("DB_USERNAME");
-    private static final String PASSWORD = dotenv.get("DB_PASSWORD");
+    public ContaRepositoryJdbcImpl(String url, String user, String password) {
+        this.URL = url;
+        this.USER = user;
+        this.PASSWORD = password;
+    }
 
     private Connection conectar() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
