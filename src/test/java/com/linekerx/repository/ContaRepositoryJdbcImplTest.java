@@ -31,10 +31,9 @@ public class ContaRepositoryJdbcImplTest {
     private ContaRepositoryJdbcImpl repository;
 
     @BeforeEach
-    void setUp() throws SQLException {
-        try {
-            Connection conn = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
-            Statement st = conn.createStatement();
+    void setUp() {
+        try (Connection conn = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
+             Statement st = conn.createStatement()) {
             st.execute("CREATE TABLE IF NOT EXISTS contas (" +
                     "cpf VARCHAR(11) PRIMARY KEY," +
                     "nome VARCHAR(100) NOT NULL," +
@@ -43,7 +42,7 @@ public class ContaRepositoryJdbcImplTest {
             st.execute("TRUNCATE TABLE contas");
             repository = new ContaRepositoryJdbcImpl(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao criar a tabela de contas", e);
+            throw new RuntimeException("Erro ao preparar a tabela de contas", e);
         }
     }
 
@@ -95,11 +94,10 @@ public class ContaRepositoryJdbcImplTest {
 
         @Test
         void deveLancarExcecaoAoRemoverContaInexistente() {
-            try {
+            ContaInexistenteException e = assertThrows(ContaInexistenteException.class, () -> {
                 repository.removerConta("00000000000");
-            } catch (ContaInexistenteException e) {
-                assertEquals("A conta 00000000000 não está cadastrada no sistema.", e.getMessage());
-            }
+            });
+            assertEquals("A conta 00000000000 não está cadastrada no sistema.", e.getMessage());
         }
 
     }
@@ -123,11 +121,10 @@ public class ContaRepositoryJdbcImplTest {
 
         @Test
         void deveLancarExcecaoAoBuscarContaInexistente() {
-            try {
+            ContaInexistenteException e = assertThrows(ContaInexistenteException.class, () -> {
                 repository.buscarPorCpf("00000000000");
-            } catch (ContaInexistenteException e) {
-                assertEquals("A conta 00000000000 não está cadastrada no sistema.", e.getMessage());
-            }
+            });
+            assertEquals("A conta 00000000000 não está cadastrada no sistema.", e.getMessage());
         }
     }
 
