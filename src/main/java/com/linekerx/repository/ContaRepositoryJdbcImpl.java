@@ -3,6 +3,7 @@ package com.linekerx.repository;
 import com.linekerx.domain.Conta;
 import com.linekerx.domain.Usuario;
 import com.linekerx.exception.ContaInexistenteException;
+import com.linekerx.exception.ErroSalvarDados;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
             stmt.setBigDecimal(3, conta.getSaldo());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+            throw new ErroSalvarDados("Erro ao acessar o banco de dados", e);
         }
     }
 
@@ -56,7 +57,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
                 throw new ContaInexistenteException(cpf);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+            throw new ErroSalvarDados("Erro ao acessar o banco de dados", e);
         }
     }
 
@@ -76,7 +77,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+            throw new ErroSalvarDados("Erro ao acessar o banco de dados", e);
         }
     }
 
@@ -90,7 +91,7 @@ public class ContaRepositoryJdbcImpl implements IContaRepository {
                 return rs.next();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao acessar o banco de dados", e);
+            throw new ErroSalvarDados("Erro ao acessar o banco de dados", e);
         }
     }
 }

@@ -72,7 +72,12 @@ public class Main {
             System.out.println("Saldo: " + FormatSaldo.formatarSaldo(conta.getSaldo()));
 
         } catch (ContaInexistenteException e) {
+            logger.warn("Conta inexistente: {}", e.getMessage());
             System.out.println(e.getMessage());
+
+        } catch (ErroSalvarDados e) {
+            logger.error("Falha ao buscar a conta no banco de dados/arquivo", e);
+            System.out.println("Ocorreu um erro interno no sistema. Tente novamente mais tarde.");
 
         } finally {
             System.out.println("Pressione Enter para continuar...");

@@ -6,4 +6,8 @@ public class ErroSalvarDados extends RuntimeException {
     public ErroSalvarDados(Path caminhoArquivo, Throwable causa) {
         super("Erro ao salvar dados: " + caminhoArquivo.toString(), causa);
     }
+
+    public ErroSalvarDados(String mensagem, Throwable causa) {
+        super(mensagem, causa);
+    }
 }
